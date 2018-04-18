@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Bayu Aldi Yansyah <bayualdiyansyah@gmail.com> (https://github.com/pyk)",
+  "repository": "https://github.com/pyk/typescript-playground",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^9.6.5",
     "typescript": "^2.8.1"
   }
 }
