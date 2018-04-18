@@ -13,6 +13,7 @@ function main() {
     // How to define a variable in typescript?
     const name = process.argv[2];
     console.log(`Hello ${name}`);
+
 }
 
 main();

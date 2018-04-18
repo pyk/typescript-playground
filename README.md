@@ -166,3 +166,162 @@ Run the compiled javacript:
     Hello bayu
 
 Nice.
+
+
+### Unit Test
+Currently we assume that our CLI app only is used only
+when `NAME` is not supplied and `NAME` is supplied.
+
+- What about the optional argument `--age`? how to get the value?
+- What if there is a invalid optinal argument? such as `--dummy` etc.
+
+So we have the following scenarios:
+
+```
+# Required first usage
+$ hello bayu --age 10
+$ hello bayu --age=10
+
+# Optional first usage
+$ hello --age 10 bayu
+$ hello --age=10 bayu
+
+# Invalid options
+$ hello bayu --dummy value
+$ hello --dummy=value bayu
+```
+
+I think we can transform this scenario into unit test.
+Given an array of string, returns the parsed argument.
+
+    ["bayu", "--age", 10] -> {"name": "bayu", "age": 10}
+    ["--age", 10, "bayu"] -> {"name": "bayu", "age": 10}
+
+How to write unit test in typescript?
+
+hmmm.
+
+Let's try using [Jest](https://facebook.github.io/jest/docs/en/getting-started.html)
+first.
+
+Setup Jest for our typescript project first. Install the required
+packages:
+
+    npm install --save-dev jest ts-jest @types/jest
+
+
+Add the following config to `package.json`:
+
+```
+"jest": {
+    "transform": {
+        "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json",
+        "node"
+    ]
+}
+```
+
+Create new file `tsconfig.json` with the following content:
+
+```
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outDir": "./dist",
+        "sourceMap": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}
+```
+
+`tsconfig.json` is a compiler options, so we can run `tsc`
+without any argument and it will compile as configured:
+
+    ./node_modules/.bin/tsc
+
+`tsconfig.json` is also required by
+[ts-jest](https://github.com/kulshekhar/ts-jest#usage).
+
+Ok. Let's try the `jest` first:
+
+    % ./node_modules/.bin/jest
+    No tests found
+    In /Users/pyk/pyk/typescript-playground
+    9 files checked.
+    testMatch:  - 9 matches
+    testPathIgnorePatterns: /node_modules/ - 9 matches
+    testRegex: (/__tests__/.*|(\.|/)(test|spec))\.(jsx?|tsx?)$ - 0 matches
+    Pattern:  - 0 matches
+
+You will see that `jest` have not found a test yet. So, let's
+create a new one.
+
+Suppose we want to test the following function:
+
+```typescript
+function hello(name: string): string {
+    return `Hello ${name}`;
+}
+
+export { hello };
+```
+
+add the code above to `src/cli.ts`.
+
+The next step is to write a test function for it.
+Create new file `src/cli.spec.ts` with the following
+content:
+
+```typescript
+// Import module
+import * as cli from "./cli";
+
+test("hello('bay') should returns 'Hello bay'", () => {
+    expect(cli.hello("bay")).toBe("Hello bay");
+})
+```
+
+And run the `jest`:
+
+    % ./node_modules/.bin/jest
+    PASS  src/cli.spec.ts
+    ✓ hello('bay') should returns 'Hello bay' (3ms)
+
+    Test Suites: 1 passed, 1 total
+    Tests:       1 passed, 1 total
+    Snapshots:   0 total
+    Time:        2.316s
+    Ran all test suites.
+
+NICE!!!
+
+Btw we can add this scripts to `package.json`:
+
+```
+  "scripts": {
+    "test": "./node_modules/.bin/jest",
+    "build": "./node_modules/.bin/tsc"
+  }
+```
+
+Usage:
+
+    npm run test
+    npm run build
