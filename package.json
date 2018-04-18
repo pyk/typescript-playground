@@ -1,0 +1,14 @@
+{
+  "name": "typescript-playground",
+  "version": "0.0.0",
+  "description": "Bayu's TypeScript Playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bayu Aldi Yansyah <bayualdiyansyah@gmail.com> (https://github.com/pyk)",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^2.8.1"
+  }
+}
